@@ -12,14 +12,18 @@ public class PlayerController : MonoBehaviour
     float currentSpeed;
     Vector2 input;
 
-    // Start is called before the first frame update
+    GameObject currentItem;
+    bool hasItem = false;
+    public float pickupDistance;
+
+    public OnDepositItemEvent depositeEvent;
+
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         anim = gameObject.GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         // Acceleration and deacceleration
@@ -45,7 +49,7 @@ public class PlayerController : MonoBehaviour
         input = context.ReadValue<Vector2>();
     }
 
-    // Sets animation paramaters
+    // Sets animation paramaters depending on the player input
     void Animate()
     {
         if (input != Vector2.zero)
@@ -54,5 +58,52 @@ public class PlayerController : MonoBehaviour
             anim.SetFloat("Vertical", input.normalized.y);
         }
         anim.SetFloat("Speed", currentSpeed);
+    }
+
+    public void ChangeItem(InputAction.CallbackContext context)
+    {
+        if (!hasItem && context.started)
+        {
+            // Checks all the colliders around it for the pickup area then takes the item and sets the pickup area item to null
+
+            RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
+            PickupArea pickup;
+
+            for(int i = area.Length-1; i > 0; i--)
+            {
+                if(area[i].collider.gameObject.name == "Pickup Area")
+                {
+                    pickup = area[i].collider.gameObject.GetComponent<PickupArea>();
+
+                    currentItem = pickup.currentItem;
+                    pickup.currentItem = null;
+                    Destroy(pickup.instansiatedItem);
+                    hasItem = true;
+                }
+            }
+        }
+        else if(context.started)
+        {
+            // Checks all the colliders around it for the area the item is supposed to go to then calls the deposit event if it is.
+
+            RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
+            //for (int i = area.Length - 1; i > 0; i--)
+            //{
+            //    Debug.Log(area[i].collider.gameObject.name);
+            //}
+
+            for (int i = area.Length - 1; i > 0; i--)
+            {
+                if (area[i].collider.gameObject.name == currentItem.name)
+                {
+                    depositeEvent.Raise();
+
+                    currentItem = null;
+                    hasItem = false;
+
+                    return;
+                }
+            }
+        }
     }
 }
