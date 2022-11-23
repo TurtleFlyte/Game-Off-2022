@@ -23,6 +23,7 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //clamps the position to inside the map sprite
         transform.position = new Vector3(Mathf.Clamp(player.transform.position.x, mapMinX, mapMaxX), Mathf.Clamp(player.transform.position.y, mapMinY, mapMaxY), transform.position.z);
     }
 }

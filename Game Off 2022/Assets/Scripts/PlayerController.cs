@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     bool hasItem = false;
     public float pickupDistance;
 
-    public OnDepositItemEvent depositeEvent;
+    public GameEvent depositeEvent;
 
     void Start()
     {
@@ -60,50 +60,56 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", currentSpeed);
     }
 
-    public void ChangeItem(InputAction.CallbackContext context)
+    public void Interact(InputAction.CallbackContext context)
     {
-        if (!hasItem && context.started)
+        if (context.started)
         {
-            // Checks all the colliders around it for the pickup area then takes the item and sets the pickup area item to null
-
-            RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
-            PickupArea pickup;
-
-            for(int i = area.Length-1; i > 0; i--)
+            // Pickup and deposit items
+            if (!hasItem)
             {
-                if(area[i].collider.gameObject.name == "Pickup Area")
-                {
-                    pickup = area[i].collider.gameObject.GetComponent<PickupArea>();
+                // Checks all the colliders around it for the pickup area then takes the item and sets the pickup area item to null
 
-                    currentItem = pickup.currentItem;
-                    pickup.currentItem = null;
-                    Destroy(pickup.instansiatedItem);
-                    hasItem = true;
+                RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
+                PickupArea pickup;
+
+                for (int i = area.Length - 1; i > 0; i--)
+                {
+                    if (area[i].collider.gameObject.name == "Pickup Area")
+                    {
+                        pickup = area[i].collider.gameObject.GetComponent<PickupArea>();
+
+                        currentItem = pickup.currentItem;
+                        pickup.currentItem = null;
+                        Destroy(pickup.instansiatedItem);
+                        hasItem = true;
+                    }
                 }
             }
-        }
-        else if(context.started)
-        {
-            // Checks all the colliders around it for the area the item is supposed to go to then calls the deposit event if it is.
-
-            RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
-            //for (int i = area.Length - 1; i > 0; i--)
-            //{
-            //    Debug.Log(area[i].collider.gameObject.name);
-            //}
-
-            for (int i = area.Length - 1; i > 0; i--)
+            else
             {
-                if (area[i].collider.gameObject.name == currentItem.name)
+                // Checks all the colliders around it for the area the item is supposed to go to then calls the deposit event if it is.
+
+                RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
+                //for (int i = area.Length - 1; i > 0; i--)
+                //{
+                //    Debug.Log(area[i].collider.gameObject.name);
+                //}
+
+                for (int i = area.Length - 1; i > 0; i--)
                 {
-                    depositeEvent.Raise();
+                    if (area[i].collider.gameObject.name == currentItem.name)
+                    {
+                        depositeEvent.Raise();
 
-                    currentItem = null;
-                    hasItem = false;
+                        currentItem = null;
+                        hasItem = false;
 
-                    return;
+                        return;
+                    }
                 }
             }
+
+            // interact with vending machine
         }
     }
 }
