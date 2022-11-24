@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Pickup Area
+  - Event
   layers:
   - Default
   - TransparentFX

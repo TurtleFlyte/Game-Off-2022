@@ -9,8 +9,10 @@ public class TimeManager : MonoBehaviour
     float timeLeft, totalTime;
     public float startingTime;
     bool canCountDown = true;
-    float multiplier = 1, stoppedMultiplier = 0;
+    float multiplier = 1;
+    public float stoppedMultiplier = 0, multiplierInc;
     public float timeToAdd;
+    [HideInInspector] public float powerupMultiplier = 1;
 
     public TextMeshProUGUI text;
 
@@ -25,11 +27,11 @@ public class TimeManager : MonoBehaviour
         {
             if (canCountDown)
             {
-                timeLeft -= Time.deltaTime * multiplier;
+                timeLeft -= Time.deltaTime * multiplier * powerupMultiplier;
 
-                totalTime += Time.deltaTime * multiplier;
+                totalTime += Time.deltaTime * multiplier * powerupMultiplier;
 
-                multiplier += 0.0001f;
+                multiplier += multiplierInc;
             }
             else
             {
@@ -78,5 +80,11 @@ public class TimeManager : MonoBehaviour
         float minutes = Mathf.FloorToInt(timeLeft / 60);
         float seconds = Mathf.FloorToInt(timeLeft % 60);
         text.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    public float GetTime
+    {
+        get { return timeLeft; }
+        set { timeLeft = value; }
     }
 }

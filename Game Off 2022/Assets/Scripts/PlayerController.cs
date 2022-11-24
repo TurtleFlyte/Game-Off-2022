@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour
     public float pickupDistance;
 
     public GameEvent depositeEvent;
+    public GameEvent interactVendingMachine;
+
+    // powerup parameters
+    float walkSpeedMultiplier = 1;
 
     void Start()
     {
@@ -29,13 +33,13 @@ public class PlayerController : MonoBehaviour
         // Acceleration and deacceleration
         if (input.magnitude > 0 && currentSpeed >= 0)
         {
-            currentSpeed += acceleration * moveSpeed * Time.deltaTime;
+            currentSpeed += acceleration * moveSpeed * Time.deltaTime * walkSpeedMultiplier;
         }
         else
         {
-            currentSpeed -= acceleration * 2 * moveSpeed * Time.deltaTime;
+            currentSpeed -= acceleration * 2 * moveSpeed * Time.deltaTime * walkSpeedMultiplier;
         }
-        currentSpeed = Mathf.Clamp(currentSpeed, 0, moveSpeed);
+        currentSpeed = Mathf.Clamp(currentSpeed, 0, moveSpeed * walkSpeedMultiplier);
 
         // Movement after acceleration
         rb.velocity = input.normalized * currentSpeed;
@@ -64,12 +68,13 @@ public class PlayerController : MonoBehaviour
     {
         if (context.started)
         {
+            // Checks all colliders around it
+            RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
+
             // Pickup and deposit items
             if (!hasItem)
             {
                 // Checks all the colliders around it for the pickup area then takes the item and sets the pickup area item to null
-
-                RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
                 PickupArea pickup;
 
                 for (int i = area.Length - 1; i > 0; i--)
@@ -89,7 +94,6 @@ public class PlayerController : MonoBehaviour
             {
                 // Checks all the colliders around it for the area the item is supposed to go to then calls the deposit event if it is.
 
-                RaycastHit2D[] area = Physics2D.CircleCastAll(transform.position, pickupDistance, Vector2.zero);
                 //for (int i = area.Length - 1; i > 0; i--)
                 //{
                 //    Debug.Log(area[i].collider.gameObject.name);
@@ -110,6 +114,19 @@ public class PlayerController : MonoBehaviour
             }
 
             // interact with vending machine
+            for (int j = area.Length - 1; j > 0; j--)
+            {
+                if (area[j].collider.gameObject.name == "Vending Machine")
+                {
+                    interactVendingMachine.Raise();
+                }
+            }
         }
+    }
+
+    public float WalkSpeedMultiplier
+    {
+        get { return walkSpeedMultiplier; }
+        set { walkSpeedMultiplier = value; }
     }
 }
