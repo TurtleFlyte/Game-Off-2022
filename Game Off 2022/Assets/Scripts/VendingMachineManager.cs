@@ -22,7 +22,7 @@ public class VendingMachineManager : MonoBehaviour
     {
         Debug.Log("activate vending machine");
 
-        ui.enabled = true;
+        ui.gameObject.SetActive(true);
 
         timeManager.CanCountDown = false;
     }
@@ -44,6 +44,7 @@ public class VendingMachineManager : MonoBehaviour
                 timeManager.powerupMultiplier = timeManager.powerupMultiplier / 1.5f;
 
                 powerup.price += 10;
+                powerup.priceText.text = powerup.price.ToString() + "s";
                 Debug.Log("time bought");
             }
             if (powerup.coupon && !discountBought)
@@ -65,6 +66,8 @@ public class VendingMachineManager : MonoBehaviour
                 player.WalkSpeedMultiplier += 0.05f;
 
                 powerup.price += 10;
+                powerup.priceText.text = powerup.price.ToString() + "s";
+
                 Debug.Log("speed bought");
             }
         }
@@ -98,7 +101,7 @@ public class VendingMachineManager : MonoBehaviour
     {
         if (context.started)
         {
-            ui.enabled = false;
+            ui.gameObject.SetActive(false);
 
             timeManager.CanCountDown = true;
         }
@@ -112,7 +115,7 @@ public class VendingMachineManager : MonoBehaviour
 
             card.price = card.price / 2;
 
-            card.priceText.text = card.price.ToString() + "$";
+            card.priceText.text = card.price.ToString() + "s";
         }
     }
 }

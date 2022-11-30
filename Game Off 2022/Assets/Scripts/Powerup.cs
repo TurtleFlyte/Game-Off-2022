@@ -17,7 +17,7 @@ public class Powerup : MonoBehaviour
 
     private void Start()
     {
-        priceText.text = price.ToString() + "$";
+        priceText.text = price.ToString() + "s";
         descriptionText.text = description;
     }
 
