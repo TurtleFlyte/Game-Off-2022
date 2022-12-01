@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     // powerup parameters
     float walkSpeedMultiplier = 1;
 
-    bool canMove = true;
+    bool canMove = false;
 
     void Start()
     {
@@ -47,10 +47,10 @@ public class PlayerController : MonoBehaviour
 
             // Movement after acceleration
             rb.velocity = input.normalized * currentSpeed;
-        }
 
-        // Set animations
-        Animate();
+            // Set animations
+            Animate();
+        }
     }
 
     public void Move(InputAction.CallbackContext context)

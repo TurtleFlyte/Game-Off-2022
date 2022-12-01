@@ -9,7 +9,7 @@ public class TimeManager : MonoBehaviour
 {
     float timeLeft, totalTime;
     public float startingTime;
-    bool canCountDown = true;
+    bool canCountDown = false;
     float multiplier = 1;
     public float stoppedMultiplier = 0, multiplierInc;
     public float timeToAdd;
