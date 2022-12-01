@@ -22,27 +22,32 @@ public class PlayerController : MonoBehaviour
     // powerup parameters
     float walkSpeedMultiplier = 1;
 
+    bool canMove = true;
+
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         anim = gameObject.GetComponent<Animator>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        // Acceleration and deacceleration
-        if (input.magnitude > 0 && currentSpeed >= 0)
+        if (canMove)
         {
-            currentSpeed += acceleration * moveSpeed * Time.deltaTime * walkSpeedMultiplier;
-        }
-        else
-        {
-            currentSpeed -= acceleration * 2 * moveSpeed * Time.deltaTime * walkSpeedMultiplier;
-        }
-        currentSpeed = Mathf.Clamp(currentSpeed, 0, moveSpeed * walkSpeedMultiplier);
+            // Acceleration and deacceleration
+            if (input.magnitude > 0 && currentSpeed >= 0)
+            {
+                currentSpeed += acceleration * moveSpeed * Time.deltaTime * walkSpeedMultiplier;
+            }
+            else
+            {
+                currentSpeed -= acceleration * 2 * moveSpeed * Time.deltaTime * walkSpeedMultiplier;
+            }
+            currentSpeed = Mathf.Clamp(currentSpeed, 0, moveSpeed * walkSpeedMultiplier);
 
-        // Movement after acceleration
-        rb.velocity = input.normalized * currentSpeed;
+            // Movement after acceleration
+            rb.velocity = input.normalized * currentSpeed;
+        }
 
         // Set animations
         Animate();
@@ -128,5 +133,10 @@ public class PlayerController : MonoBehaviour
     {
         get { return walkSpeedMultiplier; }
         set { walkSpeedMultiplier = value; }
+    }
+
+    public bool CanMove
+    {
+        set { canMove = value; }
     }
 }

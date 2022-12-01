@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
+using UnityEngine.UI;
 
 public class TimeManager : MonoBehaviour
 {
@@ -15,6 +16,10 @@ public class TimeManager : MonoBehaviour
     [HideInInspector] public float powerupMultiplier = 1;
 
     public TextMeshProUGUI text;
+
+    public GameEvent timeEnd;
+
+    public GameOverCanvas gameoverCanvas;
 
     void Start()
     {
@@ -60,6 +65,9 @@ public class TimeManager : MonoBehaviour
         Debug.Log("time ended");
         timeLeft = 0;
         canCountDown = false;
+        gameoverCanvas.gameObject.SetActive(true);
+        gameoverCanvas.SetText(totalTime);
+        timeEnd.Raise();
     }
 
     // Setter for canCountDown
